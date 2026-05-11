@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mosquée de Djenné — Expérience immersive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body data-state="loading">
+  <canvas id="gl"></canvas>
+
+  <!-- Overlay accueil -->
+  <section id="welcome-panel" class="overlay glass-card center-card" aria-hidden="true">
+    <div class="scanline"></div>
+    <h1 class="title-orbitron">Mosquée de Djenné</h1>
+    <p class="subtitle">Une expérience immersive futuriste au cœur du patrimoine malien.</p>
+    <ul class="instructions">
+      <li><span class="ic">⌨</span> PC : déplacez-vous avec <strong>ZQSD</strong> / <strong>WASD</strong> + souris.</li>
+      <li><span class="ic">📱</span> Mobile : joystick virtuel + glisser pour regarder.</li>
+      <li><span class="ic">🎯</span> Cliquez les boutons d'engrenage pour explorer chaque partie.</li>
+    </ul>
+    <button id="btn-start" class="btn-futur">Commencer</button>
+  </section>
+
+  <!-- Overlay vidéo -->
+  <section id="video-overlay" class="overlay fullscreen" aria-hidden="true">
+    <video id="intro-video" playsinline preload="auto"></video>
+    <button id="btn-skip-video" class="btn-futur btn-floating-tr">Passer</button>
+    <button id="btn-see-model" class="btn-futur btn-bottom-center hidden">Voir le modèle de la mosquée</button>
+  </section>
+
+  <!-- Overlay extérieur (HUD) -->
+  <section id="exterior-hud" class="overlay hud" aria-hidden="true">
+    <aside id="part-info-panel" class="glass-card panel-left hidden">
+      <h2 id="part-info-title" class="title-orbitron"></h2>
+      <p id="part-info-description"></p>
+    </aside>
+    <ul id="gear-menu" class="gear-wheel"></ul>
+    <button id="btn-enter-interior" class="btn-futur btn-bottom-center">Voir l'intérieur</button>
+  </section>
+
+  <!-- Overlay transition -->
+  <section id="transition-overlay" class="overlay fullscreen" aria-hidden="true">
+    <video id="transition-video" playsinline muted></video>
+    <div id="transition-fade" class="fade-black"></div>
+  </section>
+
+  <!-- Overlay intérieur (HUD FPS) -->
+  <section id="interior-hud" class="overlay hud" aria-hidden="true">
+    <button id="btn-return-exterior" class="btn-futur btn-floating-tl">← Retour</button>
+    <div id="crosshair">+</div>
+    <div id="joystick-zone" class="joystick-zone">
+      <div id="joystick-base"><div id="joystick-stick"></div></div>
+    </div>
+    <div id="pointer-lock-hint" class="hint hidden">Cliquez pour activer la souris</div>
+  </section>
+
+  <!-- Écran de chargement -->
+  <section id="loading-overlay" class="overlay fullscreen center">
+    <div class="loader-ring"></div>
+    <p class="loader-text">Initialisation…</p>
+    <progress id="load-progress" max="100" value="0"></progress>
+  </section>
+
+  <script type="module" src="app/main.js"></script>
+</body>
+</html>
