@@ -71,6 +71,285 @@ body[data-state="interior"] #interior-hud { pointer-events: none; }
   pointer-events: auto;
 }
 
+/* ===== Tableau d'accueil — holographique éthéré ===== */
+body[data-state="welcome"] { background: #08050d; }
+
+.welcome-holo {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at center, rgba(85,65,93,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(249,213,139,0.18) 0%, transparent 40%),
+    #08050d;
+  overflow: hidden;
+}
+
+/* Vignette + grille animée en fond */
+.holo-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+  pointer-events: none;
+}
+.holo-grid {
+  position: absolute; inset: -10%;
+  background-image:
+    linear-gradient(rgba(249,213,139,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249,213,139,0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(800px) rotateX(60deg) translateY(20%);
+  animation: grid-drift 24s linear infinite;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  pointer-events: none;
+}
+@keyframes grid-drift {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 0 60px, 0 0; }
+}
+
+/* Cadre holo avec coins et halo */
+.holo-frame {
+  position: relative;
+  width: min(92vw, 900px);
+  max-height: 92vh;
+  padding: clamp(28px, 5vw, 64px) clamp(24px, 4vw, 56px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vw, 36px);
+  border: 1px solid rgba(249,213,139,0.35);
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg, rgba(85,65,93,0.18), rgba(8,5,13,0.65));
+  backdrop-filter: blur(6px);
+  box-shadow:
+    0 0 0 1px rgba(249,213,139,0.08),
+    0 0 60px rgba(249,213,139,0.18),
+    inset 0 0 80px rgba(85,65,93,0.25);
+  overflow: hidden;
+  animation: holo-pulse 4s ease-in-out infinite;
+}
+@keyframes holo-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(249,213,139,0.08), 0 0 50px rgba(249,213,139,0.16), inset 0 0 80px rgba(85,65,93,0.25); }
+  50%      { box-shadow: 0 0 0 1px rgba(249,213,139,0.20), 0 0 90px rgba(249,213,139,0.30), inset 0 0 100px rgba(85,65,93,0.35); }
+}
+
+/* Coins en équerres */
+.corner {
+  position: absolute;
+  width: 28px; height: 28px;
+  border-color: var(--c-bg);
+  border-style: solid;
+  border-width: 0;
+  filter: drop-shadow(0 0 6px rgba(249,213,139,0.7));
+}
+.corner.tl { top: 10px; left: 10px; border-top-width: 2px; border-left-width: 2px; }
+.corner.tr { top: 10px; right: 10px; border-top-width: 2px; border-right-width: 2px; }
+.corner.bl { bottom: 10px; left: 10px; border-bottom-width: 2px; border-left-width: 2px; }
+.corner.br { bottom: 10px; right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
+
+/* Scanline horizontale qui balaie le cadre */
+.holo-scanline {
+  position: absolute;
+  left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(180deg, transparent, rgba(249,213,139,0.18), transparent);
+  filter: blur(1px);
+  pointer-events: none;
+  animation: holo-scan 5s linear infinite;
+}
+@keyframes holo-scan {
+  0% { top: -60px; }
+  100% { top: 100%; }
+}
+
+/* Header */
+.holo-header { text-align: center; }
+.holo-tag {
+  display: inline-block;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  letter-spacing: 0.4em;
+  color: var(--c-bg);
+  padding: 4px 10px;
+  border: 1px solid rgba(249,213,139,0.5);
+  border-radius: 2px;
+  margin-bottom: 18px;
+  opacity: 0.9;
+}
+.holo-title {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: clamp(2rem, 6vw, 4.2rem);
+  letter-spacing: 0.18em;
+  line-height: 1;
+  color: var(--c-bg);
+  text-shadow:
+    0 0 12px rgba(249,213,139,0.6),
+    0 0 32px rgba(249,213,139,0.35),
+    0 0 60px rgba(85,65,93,0.6);
+  margin-bottom: 18px;
+}
+.holo-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(249,213,139,0.6), transparent);
+  position: relative;
+  margin: 8px auto 18px;
+  width: 60%;
+}
+.holo-divider span {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 8px; height: 8px;
+  background: var(--c-bg);
+  box-shadow: 0 0 12px var(--c-bg);
+}
+.holo-subtitle {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  color: rgba(255, 240, 210, 0.85);
+  letter-spacing: 0.08em;
+}
+
+/* Section instructions */
+.holo-section-title {
+  font-family: var(--font-title);
+  font-size: 0.78rem;
+  letter-spacing: 0.35em;
+  color: rgba(249,213,139,0.7);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(249,213,139,0.18);
+}
+.holo-instructions ul {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.holo-instructions li {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 16px;
+  border: 1px solid rgba(249,213,139,0.18);
+  border-left: 2px solid var(--c-bg);
+  background: rgba(85,65,93,0.18);
+  font-family: var(--font-body);
+  color: rgba(255, 240, 210, 0.92);
+  transition: all 0.3s ease;
+}
+.holo-instructions li:hover {
+  border-color: rgba(249,213,139,0.5);
+  background: rgba(85,65,93,0.32);
+  transform: translateX(4px);
+}
+.holo-instructions .ix {
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: var(--c-bg);
+  font-size: 0.95rem;
+  letter-spacing: 0.1em;
+  opacity: 0.85;
+}
+.holo-instructions strong {
+  display: block;
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  color: var(--c-bg);
+  margin-bottom: 2px;
+}
+.holo-instructions kbd {
+  display: inline-block;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  margin: 0 2px;
+  border: 1px solid rgba(249,213,139,0.5);
+  border-radius: 2px;
+  background: rgba(249,213,139,0.08);
+  color: var(--c-bg);
+}
+
+/* Footer */
+.holo-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.holo-coord {
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: rgba(249,213,139,0.55);
+}
+
+/* Bouton holographique */
+.holo-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.35em;
+  color: var(--c-bg);
+  background: transparent;
+  border: 1px solid rgba(249,213,139,0.6);
+  padding: 18px 32px 18px 28px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+.holo-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(249,213,139,0.22), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.holo-btn:hover::before { transform: translateX(100%); }
+.holo-btn:hover {
+  background: rgba(249,213,139,0.08);
+  border-color: var(--c-bg);
+  box-shadow:
+    0 0 24px rgba(249,213,139,0.5),
+    inset 0 0 20px rgba(249,213,139,0.12);
+  color: #fff;
+}
+.holo-btn-ring {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  box-shadow: 0 0 12px var(--c-bg);
+  animation: ring-pulse 1.4s ease-in-out infinite;
+}
+@keyframes ring-pulse {
+  0%, 100% { opacity: 0.7; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+.holo-btn-arrow {
+  font-size: 1.6rem;
+  line-height: 0.6;
+  color: var(--c-bg);
+  transition: transform 0.3s ease;
+}
+.holo-btn:hover .holo-btn-arrow { transform: translateX(6px); }
+
+/* Responsive welcome */
+@media (max-width: 600px) {
+  .holo-frame { padding: 28px 22px; gap: 22px; }
+  .holo-title { font-size: clamp(1.6rem, 9vw, 2.4rem); }
+  .holo-footer { justify-content: center; }
+  .holo-coord { display: none; }
+  .holo-instructions ul { grid-template-columns: 1fr; gap: 10px; }
+}
+
 /* ===== Glassmorphism panneau ===== */
 .glass-card {
   background: var(--c-glass);

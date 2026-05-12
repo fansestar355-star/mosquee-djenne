@@ -20,17 +20,50 @@
 <body data-state="loading">
   <canvas id="gl"></canvas>
 
-  <!-- Overlay accueil -->
-  <section id="welcome-panel" class="overlay glass-card center-card" aria-hidden="true">
-    <div class="scanline"></div>
-    <h1 class="title-orbitron">Mosquée de Djenné</h1>
-    <p class="subtitle">Une expérience immersive futuriste au cœur du patrimoine malien.</p>
-    <ul class="instructions">
-      <li><span class="ic">⌨</span> PC : déplacez-vous avec <strong>ZQSD</strong> / <strong>WASD</strong> + souris.</li>
-      <li><span class="ic">📱</span> Mobile : joystick virtuel + glisser pour regarder.</li>
-      <li><span class="ic">🎯</span> Cliquez les boutons d'engrenage pour explorer chaque partie.</li>
-    </ul>
-    <button id="btn-start" class="btn-futur">Commencer</button>
+  <!-- Overlay accueil — holographique éthéré, plein écran -->
+  <section id="welcome-panel" class="overlay welcome-holo" aria-hidden="true">
+    <div class="holo-vignette"></div>
+    <div class="holo-grid"></div>
+
+    <div class="holo-frame">
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+      <div class="holo-scanline"></div>
+
+      <header class="holo-header">
+        <span class="holo-tag">EXPERIENCE // 2026</span>
+        <h1 class="holo-title">MOSQUÉE<br/>DE&nbsp;DJENNÉ</h1>
+        <div class="holo-divider"><span></span></div>
+        <p class="holo-subtitle">Plongée immersive au cœur d'un patrimoine millénaire.</p>
+      </header>
+
+      <section class="holo-instructions">
+        <h2 class="holo-section-title">// PROTOCOLE</h2>
+        <ul>
+          <li>
+            <span class="ix">01</span>
+            <div><strong>PC</strong><span> Déplacement&nbsp;<kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd>&nbsp;+&nbsp;souris</span></div>
+          </li>
+          <li>
+            <span class="ix">02</span>
+            <div><strong>Mobile</strong><span> Joystick virtuel&nbsp;+&nbsp;glisser pour regarder</span></div>
+          </li>
+          <li>
+            <span class="ix">03</span>
+            <div><strong>Engrenage</strong><span> Sélectionnez une partie pour l'explorer</span></div>
+          </li>
+        </ul>
+      </section>
+
+      <footer class="holo-footer">
+        <button id="btn-start" class="holo-btn">
+          <span class="holo-btn-ring"></span>
+          <span class="holo-btn-label">COMMENCER</span>
+          <span class="holo-btn-arrow">›</span>
+        </button>
+        <span class="holo-coord">N 13°54'21"  /  W 4°33'18"</span>
+      </footer>
+    </div>
   </section>
 
   <!-- Overlay vidéo -->
