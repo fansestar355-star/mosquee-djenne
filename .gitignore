@@ -4,3 +4,6 @@ Thumbs.db
 *.log
 .vscode/
 .idea/
+
+# Outils locaux de dev Blender (non versionnés)
+tools/
