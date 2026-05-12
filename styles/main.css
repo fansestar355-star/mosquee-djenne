@@ -41,24 +41,35 @@ body {
   position: fixed; inset: 0;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.6s ease;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0s linear 0.4s;
   z-index: 10;
 }
 .overlay.fullscreen { display: flex; align-items: center; justify-content: center; }
 .overlay.center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .overlay.hud { pointer-events: none; }
-.overlay [data-active], .overlay button, .overlay input, .overlay .glass-card,
-.overlay video, .overlay .gear-wheel, .overlay .joystick-zone {
+
+/* L'overlay actif passe au-dessus et devient interactif */
+body[data-state="loading"]    #loading-overlay,
+body[data-state="welcome"]    #welcome-panel,
+body[data-state="video"]      #video-overlay,
+body[data-state="exterior"]   #exterior-hud,
+body[data-state="transition"] #transition-overlay,
+body[data-state="interior"]   #interior-hud {
+  opacity: 1;
+  visibility: visible;
   pointer-events: auto;
+  z-index: 100;
+  transition: opacity 0.4s ease, visibility 0s linear 0s;
 }
 
-body[data-state="loading"]   #loading-overlay { opacity: 1; pointer-events: auto; }
-body[data-state="welcome"]   #welcome-panel { opacity: 1; pointer-events: auto; }
-body[data-state="welcome"]   #welcome-panel { aria-hidden: false; }
-body[data-state="video"]     #video-overlay { opacity: 1; pointer-events: auto; }
-body[data-state="exterior"]  #exterior-hud  { opacity: 1; }
-body[data-state="transition"]#transition-overlay { opacity: 1; pointer-events: auto; }
-body[data-state="interior"]  #interior-hud  { opacity: 1; }
+/* Le HUD laisse passer les clics, sauf sur les éléments interactifs */
+body[data-state="exterior"] #exterior-hud,
+body[data-state="interior"] #interior-hud { pointer-events: none; }
+.overlay button, .overlay input, .overlay video,
+.overlay .glass-card, .overlay .gear-wheel, .overlay .joystick-zone {
+  pointer-events: auto;
+}
 
 /* ===== Glassmorphism panneau ===== */
 .glass-card {
