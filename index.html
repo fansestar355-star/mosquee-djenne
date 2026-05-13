@@ -3,109 +3,330 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mosquée de Djenné — Expérience immersive</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <title>Djenné · Survol du Drone</title>
   <link rel="stylesheet" href="styles/main.css" />
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-    }
-  }
-  </script>
 </head>
-<body data-state="loading">
-  <canvas id="gl"></canvas>
+<body>
+  <main id="stage" class="stage">
 
-  <!-- Overlay accueil — holographique éthéré, plein écran -->
-  <section id="welcome-panel" class="overlay welcome-holo" aria-hidden="true">
-    <div class="holo-vignette"></div>
-    <div class="holo-grid"></div>
+    <!-- Halo lumineux d'arrière-plan -->
+    <div class="sky" aria-hidden="true"></div>
+    <div class="sun" aria-hidden="true"></div>
+    <div class="grid" aria-hidden="true"></div>
+    <div class="sand" aria-hidden="true"></div>
 
-    <div class="holo-frame">
-      <span class="corner tl"></span><span class="corner tr"></span>
-      <span class="corner bl"></span><span class="corner br"></span>
-      <div class="holo-scanline"></div>
-
-      <header class="holo-header">
-        <span class="holo-tag">EXPERIENCE // 2026</span>
-        <h1 class="holo-title">MOSQUÉE<br/>DE&nbsp;DJENNÉ</h1>
-        <div class="holo-divider"><span></span></div>
-        <p class="holo-subtitle">Plongée immersive au cœur d'un patrimoine millénaire.</p>
-      </header>
-
-      <section class="holo-instructions">
-        <h2 class="holo-section-title">// PROTOCOLE</h2>
-        <ul>
-          <li>
-            <span class="ix">01</span>
-            <div><strong>PC</strong><span> Déplacement&nbsp;<kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd>&nbsp;+&nbsp;souris</span></div>
-          </li>
-          <li>
-            <span class="ix">02</span>
-            <div><strong>Mobile</strong><span> Joystick virtuel&nbsp;+&nbsp;glisser pour regarder</span></div>
-          </li>
-          <li>
-            <span class="ix">03</span>
-            <div><strong>Engrenage</strong><span> Sélectionnez une partie pour l'explorer</span></div>
-          </li>
-        </ul>
-      </section>
-
-      <footer class="holo-footer">
-        <button id="btn-start" class="holo-btn">
-          <span class="holo-btn-ring"></span>
-          <span class="holo-btn-label">COMMENCER</span>
-          <span class="holo-btn-arrow">›</span>
-        </button>
-        <span class="holo-coord">N 13°54'21"  /  W 4°33'18"</span>
-      </footer>
+    <!-- Bandeau motif (CSS) -->
+    <div class="mosque" aria-hidden="true">
+      <div class="band-halo"></div>
+      <div class="band-row row-chev-up"></div>
+      <div class="band-row row-rhombus"></div>
+      <div class="band-row row-chev-down"></div>
+      <div class="band-row row-tri"></div>
     </div>
-  </section>
 
-  <!-- Overlay vidéo -->
-  <section id="video-overlay" class="overlay fullscreen" aria-hidden="true">
-    <video id="intro-video" playsinline preload="auto"></video>
-    <button id="btn-skip-video" class="btn-futur btn-floating-tr">Passer</button>
-    <button id="btn-see-model" class="btn-futur btn-bottom-center hidden">Voir le modèle de la mosquée</button>
-  </section>
+    <!-- Cadre HUD futuriste -->
+    <div class="hud" aria-hidden="true">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+    </div>
 
-  <!-- Overlay extérieur (HUD) -->
-  <section id="exterior-hud" class="overlay hud" aria-hidden="true">
-    <aside id="part-info-panel" class="glass-card panel-left hidden">
-      <h2 id="part-info-title" class="title-orbitron"></h2>
-      <p id="part-info-description"></p>
+    <!-- Particules dorées flottantes -->
+    <div class="particles" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- Panneaux HUD latéraux (grand écran) -->
+    <aside class="side left" aria-hidden="true">
+      <div class="side-label">N · 14°26'12"</div>
+      <ul class="side-list">
+        <li><span>01</span>SCAN OK</li>
+        <li><span>02</span>LINK 5G</li>
+        <li><span>03</span>GPS LOCK</li>
+        <li><span>04</span>IMU CAL</li>
+        <li><span>05</span>CAM 4K</li>
+      </ul>
+      <div class="side-bars">
+        <div class="vb"><i style="--h:78%"></i></div>
+        <div class="vb"><i style="--h:54%"></i></div>
+        <div class="vb"><i style="--h:92%"></i></div>
+        <div class="vb"><i style="--h:66%"></i></div>
+        <div class="vb"><i style="--h:88%"></i></div>
+      </div>
+      <div class="side-tag">SECT · A-04</div>
     </aside>
-    <ul id="gear-menu" class="gear-wheel"></ul>
-    <button id="btn-enter-interior" class="btn-futur btn-bottom-center">Voir l'intérieur</button>
-  </section>
 
-  <!-- Overlay transition -->
-  <section id="transition-overlay" class="overlay fullscreen" aria-hidden="true">
-    <video id="transition-video" playsinline muted></video>
-    <div id="transition-fade" class="fade-black"></div>
-  </section>
+    <aside class="side right" aria-hidden="true">
+      <div class="side-label">W · 04°33'07"</div>
+      <div class="compass">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="#f9d58b" stroke-width="1" opacity=".7"/>
+          <circle cx="50" cy="50" r="34" fill="none" stroke="#f9d58b" stroke-width=".5" stroke-dasharray="2 4" opacity=".5"/>
+          <g stroke="#f9d58b" stroke-width="1">
+            <line x1="50" y1="6"  x2="50" y2="14"/>
+            <line x1="50" y1="86" x2="50" y2="94"/>
+            <line x1="6"  y1="50" x2="14" y2="50"/>
+            <line x1="86" y1="50" x2="94" y2="50"/>
+          </g>
+          <polygon points="50,18 46,50 54,50" fill="#f9d58b"/>
+          <polygon points="50,82 46,50 54,50" fill="#f9d58b" opacity=".35"/>
+          <text x="50" y="4"  text-anchor="middle" font-size="6" fill="#f9d58b">N</text>
+          <text x="50" y="100" text-anchor="middle" font-size="6" fill="#f9d58b" opacity=".5">S</text>
+          <text x="2"  y="52" font-size="6" fill="#f9d58b" opacity=".5">W</text>
+          <text x="93" y="52" font-size="6" fill="#f9d58b" opacity=".5">E</text>
+        </svg>
+      </div>
+      <ul class="side-list">
+        <li><span>T°</span>32°C</li>
+        <li><span>HR</span>14%</li>
+        <li><span>PR</span>1012</li>
+        <li><span>UV</span>09</li>
+      </ul>
+      <div class="side-tag">FREQ · 2.4 GHz</div>
+    </aside>
 
-  <!-- Overlay intérieur (HUD FPS) -->
-  <section id="interior-hud" class="overlay hud" aria-hidden="true">
-    <button id="btn-return-exterior" class="btn-futur btn-floating-tl">← Retour</button>
-    <div id="crosshair">+</div>
-    <div id="joystick-zone" class="joystick-zone">
-      <div id="joystick-base"><div id="joystick-stick"></div></div>
+    <!-- Tablette holographique -->
+    <section class="panel">
+      <div class="holo-tablet" id="tablet">
+        <span class="edge e1"></span><span class="edge e2"></span>
+        <span class="edge e3"></span><span class="edge e4"></span>
+        <span class="bolt b1"></span><span class="bolt b2"></span>
+        <span class="bolt b3"></span><span class="bolt b4"></span>
+
+        <!-- En-tête -->
+        <header class="t-head">
+          <div class="t-brand">
+            <span class="logo">◈</span>
+            <span>DJENNÉ · RECON SYS</span>
+          </div>
+          <div class="t-status">
+            <i></i><i></i><i></i>
+            <span>v1.0 · ONLINE</span>
+          </div>
+        </header>
+
+        <!-- Grille principale -->
+        <div class="t-grid">
+          <!-- Colonne gauche : infos -->
+          <aside class="t-left">
+            <div class="t-row">
+              <span class="t-ico">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="currentColor"/><line x1="12" y1="2" x2="12" y2="6" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" stroke-width="1.5"/><line x1="2" y1="12" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/><line x1="18" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.5"/></svg>
+              </span>
+              <div class="t-content">
+                <b>CIBLE</b>
+                <em>Grande Mosquée</em>
+              </div>
+              <span class="t-dot"></span>
+            </div>
+
+            <div class="t-row">
+              <span class="t-ico">
+                <svg viewBox="0 0 24 24"><path d="M12 2 C8 2 5 5 5 9 C5 14 12 22 12 22 C12 22 19 14 19 9 C19 5 16 2 12 2 Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="9" r="2.5" fill="currentColor"/></svg>
+              </span>
+              <div class="t-content">
+                <b>POSITION</b>
+                <em>14°N · 04°W</em>
+              </div>
+              <span class="t-dot"></span>
+            </div>
+
+            <div class="t-row">
+              <span class="t-ico">
+                <svg viewBox="0 0 24 24"><path d="M3 9 Q6 5 9 9 T15 9 T21 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 14 Q6 10 9 14 T15 14 T21 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".6"/><path d="M3 19 Q6 15 9 19 T15 19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg>
+              </span>
+              <div class="t-content">
+                <b>VENT</b>
+                <em>04 m/s · NE</em>
+              </div>
+              <span class="t-dot"></span>
+            </div>
+
+            <div class="t-row">
+              <span class="t-ico">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3 A9 9 0 0 0 12 21 Z" fill="currentColor"/></svg>
+              </span>
+              <div class="t-content">
+                <b>HEURE</b>
+                <em>18:42 · MAGHRIB</em>
+              </div>
+              <span class="t-dot"></span>
+            </div>
+          </aside>
+
+          <!-- Visuel central : drone vue de dessus -->
+          <div class="t-center">
+            <div class="t-holo">
+              <!-- Viseur fixe -->
+              <svg class="t-target" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                  <radialGradient id="halo" cx="50%" cy="50%" r="60%">
+                    <stop offset="0%" stop-color="#f9d58b" stop-opacity=".45"/>
+                    <stop offset="70%" stop-color="#f9d58b" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="100" cy="100" r="90" fill="url(#halo)"/>
+                <g stroke="#f9d58b" stroke-width="1" fill="none" opacity=".75">
+                  <circle cx="100" cy="100" r="80"/>
+                  <circle cx="100" cy="100" r="50" stroke-dasharray="3 5"/>
+                  <line x1="100" y1="10"  x2="100" y2="30"/>
+                  <line x1="100" y1="170" x2="100" y2="190"/>
+                  <line x1="10"  y1="100" x2="30"  y2="100"/>
+                  <line x1="170" y1="100" x2="190" y2="100"/>
+                </g>
+              </svg>
+
+              <!-- Drone qui tourne sur Z -->
+              <svg class="t-drone" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                  <radialGradient id="propGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%"  stop-color="#fff7df" stop-opacity=".9"/>
+                    <stop offset="60%" stop-color="#f9d58b" stop-opacity=".3"/>
+                    <stop offset="100%" stop-color="#f9d58b" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+
+                <!-- Bras en X -->
+                <g stroke="#f9d58b" stroke-width="6" stroke-linecap="round">
+                  <line x1="40"  y1="40"  x2="100" y2="100"/>
+                  <line x1="160" y1="40"  x2="100" y2="100"/>
+                  <line x1="40"  y1="160" x2="100" y2="100"/>
+                  <line x1="160" y1="160" x2="100" y2="100"/>
+                </g>
+
+                <!-- Châssis central -->
+                <rect x="80" y="80" width="40" height="40" rx="6"
+                      fill="#2a1f33" stroke="#f9d58b" stroke-width="2"/>
+                <circle cx="100" cy="100" r="6" fill="#f9d58b">
+                  <animate attributeName="opacity" values="1;.3;1" dur="1.2s" repeatCount="indefinite"/>
+                </circle>
+
+                <!-- Moteurs -->
+                <g fill="#2a1f33" stroke="#f9d58b" stroke-width="2">
+                  <circle cx="40"  cy="40"  r="14"/>
+                  <circle cx="160" cy="40"  r="14"/>
+                  <circle cx="40"  cy="160" r="14"/>
+                  <circle cx="160" cy="160" r="14"/>
+                </g>
+
+                <!-- Hélices (cercles flous tournants) -->
+                <g class="props">
+                  <circle cx="40"  cy="40"  r="22" fill="url(#propGrad)"/>
+                  <circle cx="160" cy="40"  r="22" fill="url(#propGrad)"/>
+                  <circle cx="40"  cy="160" r="22" fill="url(#propGrad)"/>
+                  <circle cx="160" cy="160" r="22" fill="url(#propGrad)"/>
+                </g>
+
+                <!-- Pales fines (lent, sur le drone qui tourne) -->
+                <g stroke="#fff7df" stroke-width="1.5" opacity=".8">
+                  <line x1="20"  y1="40"  x2="60"  y2="40"/>
+                  <line x1="40"  y1="20"  x2="40"  y2="60"/>
+                  <line x1="140" y1="40"  x2="180" y2="40"/>
+                  <line x1="160" y1="20"  x2="160" y2="60"/>
+                  <line x1="20"  y1="160" x2="60"  y2="160"/>
+                  <line x1="40"  y1="140" x2="40"  y2="180"/>
+                  <line x1="140" y1="160" x2="180" y2="160"/>
+                  <line x1="160" y1="140" x2="160" y2="180"/>
+                </g>
+              </svg>
+            </div>
+            <div class="t-scan"></div>
+            <div class="t-pct"><b id="readyPct">98</b><span>%</span><em>SYSTÈME PRÊT</em></div>
+          </div>
+
+          <!-- Colonne droite : badge -->
+          <aside class="t-right">
+            <div class="t-badge">DRONE<br/><b id="droneMode">—</b></div>
+            <div class="t-mini">
+              <span>ALT</span><b>00m</b>
+              <span>SIG</span><b>98%</b>
+              <span>BAT</span><b>100%</b>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Console défilante -->
+        <div class="t-console" id="console">
+          <span class="prompt">›</span>
+          <div class="lines" id="consoleLines"></div>
+        </div>
+
+        <!-- Barres -->
+        <div class="t-bars">
+          <div class="bar-row"><label>SIGNAL</label><div class="track"><span style="--w:98%"></span></div><b>98%</b></div>
+          <div class="bar-row"><label>BATTERIE</label><div class="track"><span style="--w:100%"></span></div><b>100%</b></div>
+          <div class="bar-row"><label>GPS</label><div class="track"><span style="--w:92%"></span></div><b>92%</b></div>
+        </div>
+
+        <!-- Pied + bouton -->
+        <footer class="t-foot">
+          <p class="t-title">DJENNÉ <small>Patrimoine · Survol 3D</small></p>
+          <button id="launchBtn" class="launch" type="button" aria-label="Décoller le drone">
+            <svg class="drone-ico" viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="14" cy="14" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="50" cy="14" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="14" cy="50" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="50" cy="50" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+              <rect x="26" y="26" width="12" height="12" rx="2" fill="currentColor"/>
+              <line x1="20" y1="20" x2="26" y2="26" stroke="currentColor" stroke-width="2"/>
+              <line x1="44" y1="20" x2="38" y2="26" stroke="currentColor" stroke-width="2"/>
+              <line x1="20" y1="44" x2="26" y2="38" stroke="currentColor" stroke-width="2"/>
+              <line x1="44" y1="44" x2="38" y2="38" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span class="lbl">DÉCOLLAGE DU DRONE</span>
+            <span class="bar"></span>
+          </button>
+        </footer>
+      </div>
+
+      <!-- Reflet au sol -->
+      <div class="reflection" aria-hidden="true"></div>
+      <div class="dust" aria-hidden="true"></div>
+    </section>
+
+    <!-- Overlay vidéo -->
+    <div id="videoOverlay" class="video-overlay" aria-hidden="true">
+      <div class="video-frame">
+        <div class="vhud">
+          <span class="rec"><i></i> REC</span>
+          <span class="meta" id="vMeta">DRONE · 00:00</span>
+          <span class="coords">14°N · 04°W</span>
+        </div>
+        <video id="introVideo" playsinline preload="metadata"></video>
+        <button id="skipBtn" class="skip" type="button">PASSER ›</button>
+      </div>
     </div>
-    <div id="pointer-lock-hint" class="hint hidden">Cliquez pour activer la souris</div>
-  </section>
 
-  <!-- Écran de chargement -->
-  <section id="loading-overlay" class="overlay fullscreen center">
-    <div class="loader-ring"></div>
-    <p class="loader-text">Initialisation…</p>
-    <progress id="load-progress" max="100" value="0"></progress>
-  </section>
+    <!-- Voile de boot -->
+    <div id="boot" class="boot">
+      <div class="boot-box">
+        <p class="boot-title">DJENNÉ · RECON SYS</p>
+        <p class="boot-sub">Initialisation du tableau de commande</p>
+        <div class="boot-log" id="bootLog"></div>
+        <div class="boot-bar"><span id="bootBar"></span></div>
+        <p class="boot-status" id="bootStatus">BOOT 0%</p>
+      </div>
+    </div>
 
-  <script type="module" src="app/main.js"></script>
+    <!-- Bouton son -->
+    <button id="soundToggle" class="sound-btn" type="button" aria-label="Son">
+      <svg viewBox="0 0 24 24"><path d="M3 9 V15 H7 L13 20 V4 L7 9 Z" fill="currentColor"/><path d="M16 8 Q20 12 16 16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      <span id="soundLabel">SON OFF</span>
+    </button>
+
+    <!-- Séquence de décollage -->
+    <div id="liftoff" class="liftoff" aria-hidden="true">
+      <div class="ring"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+      <p>INITIALISATION...</p>
+    </div>
+
+  </main>
+
+  <script src="app/main.js"></script>
 </body>
 </html>
