@@ -253,15 +253,80 @@
     return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
   };
 
+  // ===== Compte à rebours de lancement =====
+  const loShake  = document.querySelector('.lo-shake');
+  const loDigit  = document.getElementById('liftoffDigit');
+  const loTminus = document.getElementById('liftoffTminus');
+  const loLabel  = document.getElementById('liftoffLabel');
+  const loCharge = document.getElementById('liftoffCharge');
+  const loFlash  = document.getElementById('liftoffFlash');
+
+  const setDigit = (txt, cls='tick') => {
+    if (!loDigit) return;
+    loDigit.className = 'lo-digit';
+    void loDigit.offsetWidth;        // force reflow pour relancer l'animation
+    loDigit.textContent = txt;
+    loDigit.classList.add(cls);
+  };
+  const setLabel  = t => { if (loLabel)  loLabel.textContent = t; };
+  const setTminus = t => { if (loTminus) loTminus.textContent = t; };
+
   const showLiftoff = () => new Promise((resolve) => {
+    // reset
+    if (loShake)  loShake.classList.remove('shaking','go-shake','spool','go');
+    if (loCharge) loCharge.style.strokeDashoffset = '578';
+    if (loFlash)  loFlash.classList.remove('fire');
+    setLabel('PRÉPARATION'); setTminus('T - 0:03');
+    if (loDigit) { loDigit.textContent = ''; loDigit.className = 'lo-digit'; }
+
     liftoff.classList.add('on');
-    // simulate altitude rise during liftoff
-    let i = 0;
+
+    // altitude simulée
+    let alt = 0;
     const riseId = setInterval(() => {
-      i += 8; state.alt = i;
-      if (i >= 80) clearInterval(riseId);
-    }, 100);
-    setTimeout(() => { liftoff.classList.remove('on'); resolve(); }, 1600);
+      alt += 6; state.alt = alt;
+      if (alt >= 80) clearInterval(riseId);
+    }, 70);
+
+    // T-3
+    setTimeout(() => {
+      setDigit('3'); setLabel('SPOOL-UP MOTEURS'); setTminus('T - 0:03');
+      if (loShake)  loShake.classList.add('shaking','spool');
+      if (loCharge) loCharge.style.strokeDashoffset = '385';   // ~33%
+      beep(440, .12, 'square', .08);
+    }, 200);
+
+    // T-2
+    setTimeout(() => {
+      setDigit('2'); setLabel('ANNEAUX EN CHARGE'); setTminus('T - 0:02');
+      if (loCharge) loCharge.style.strokeDashoffset = '192';   // ~66%
+      beep(550, .12, 'square', .08);
+    }, 1100);
+
+    // T-1
+    setTimeout(() => {
+      setDigit('1'); setLabel('VERROUILLAGE CIBLE'); setTminus('T - 0:01');
+      if (loCharge) loCharge.style.strokeDashoffset = '40';    // ~93%
+      beep(700, .14, 'square', .09);
+    }, 2000);
+
+    // GO !
+    setTimeout(() => {
+      setDigit('GO', 'go'); setLabel('DÉCOLLAGE'); setTminus('T + 0:00');
+      if (loShake)  { loShake.classList.remove('spool'); loShake.classList.add('go','go-shake'); }
+      if (loCharge) loCharge.style.strokeDashoffset = '0';
+      if (loFlash)  loFlash.classList.add('fire');
+      // whoosh sonore
+      try { whoosh(); } catch(_) {}
+      beep(880, .25, 'sawtooth', .14);
+    }, 2900);
+
+    // fin de séquence
+    setTimeout(() => {
+      liftoff.classList.remove('on');
+      if (loShake) loShake.classList.remove('shaking','go-shake','go');
+      resolve();
+    }, 3700);
   });
 
   const playVideo = async () => {
@@ -282,17 +347,28 @@
     state.alt = 0;
   };
 
+  const CUT_AT = 15; // couper la vidéo à 15s → enchaîne sur la vue mosquée
   video.addEventListener('timeupdate', () => {
     vMeta.textContent = `DRONE · ${fmt(video.currentTime)}`;
+    if (video.currentTime >= CUT_AT && !video._cut) {
+      video._cut = true;
+      video.dispatchEvent(new Event('ended'));
+    }
   });
   video.addEventListener('ended', closeVideo);
-  skipBtn.addEventListener('click', closeVideo);
+  skipBtn.addEventListener('click', () => {
+    if (video._cut) { closeVideo(); return; }
+    video._cut = true;
+    video.dispatchEvent(new Event('ended')); // déclenche aussi startMosqueView()
+  });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && overlay.classList.contains('on')) closeVideo();
   });
 
   launchBtn.addEventListener('click', async () => {
     launchBtn.disabled = true;
+    launchBtn.classList.add('firing');
+    setTimeout(() => launchBtn.classList.remove('firing'), 600);
     pushConsole('Séquence de décollage engagée');
     initAudio(); if (ac.state==='suspended') ac.resume();
     whoosh();
